@@ -24,6 +24,14 @@ module TSort
     components
   end
 
+  def tsort_each_node
+    raise NotImplementedError
+  end
+
+  def tsort_each_child
+    raise NotImplementedError
+  end
+
   private def each_strongly_connected_component(&block : Array(Int32) -> _) : Nil
     id_map = {} of Int32 => Int32 | Nil
     stack  = [] of Int32
