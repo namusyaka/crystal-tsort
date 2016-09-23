@@ -5,23 +5,27 @@ module TSort
   end
 
   def tsort
-    components = [] of Int32 | Array(Int32)
+    tsort_each
+  end
+
+  def tsort_each(&block : Int32 -> _) : Nil
     each_strongly_connected_component do |component|
       if component.size == 1
-        components << component.first
+        block.call(component.first)
       else
         raise Cyclic.new("topological sort failed: #{component.inspect}")
       end
     end
+  end
+
+  def tsort_each
+    components = [] of Int32 | Array(Int32)
+    tsort_each { |component| components << component }
     components
   end
 
   def strongly_connected_components
-    components = [] of Array(Int32)
-    each_strongly_connected_component do |component|
-      components << component
-    end
-    components
+    each_strongly_connected_component
   end
 
   def tsort_each_node
@@ -43,6 +47,12 @@ module TSort
         end
       end
     end
+  end
+
+  private def each_strongly_connected_component : Array(Array(Int32))
+    components = [] of Array(Int32)
+    each_strongly_connected_component { |component| components << component }
+    components
   end
 
   private def each_strongly_connected_component_from(node, id_map, stack, &block : Array(Int32) -> _) : Int32
